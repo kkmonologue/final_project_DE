@@ -50,7 +50,7 @@ def clean_description(value) -> str | None:
 # MAIN TRANSFORM
 
 def transform_mcc():
-    # ── Read source data via SQLAlchemy (avoids pandas UserWarning) ──────
+    # ── Read source data via SQLAlchemy (avoids pandas UserWarning) 
     engine = create_engine(
         f"postgresql+psycopg2://postgres:{PASSWORD}@localhost:{PORT}/{DB_NAME}"
     )
@@ -59,10 +59,10 @@ def transform_mcc():
 
     print(f"  Source rows: {len(df)}")
 
-    # ── 1 & 2. Clean code column (strip quotes, strip MCC prefix) ────────
+    # ── 1 & 2. Clean code column (strip quotes, strip MCC prefix) 
     df["code"] = df["code"].apply(clean_code)
 
-    # ── 3. Drop NOTE / COMMENT rows (code is None after clean_code) ──────
+    # ── 3. Drop NOTE / COMMENT rows (code is None after clean_code) 
     non_data_mask = df["code"].isna()
     if non_data_mask.any():
         print(f"  Dropped {non_data_mask.sum()} non-data row(s) "
@@ -72,10 +72,10 @@ def transform_mcc():
     # Safe to cast to int now that all codes are numeric strings
     df["code"] = df["code"].astype(int)
 
-    # ── 4. Title Case description ────────────────────────────────────────
+    # ── 4. Title Case description 
     df["description"] = df["description"].apply(clean_description)
 
-    # ── 5. Deduplicate on code (keep first occurrence) ───────────────────
+    # ── 5. Deduplicate on code (keep first occurrence) 
     before = len(df)
     df = df.drop_duplicates(subset=["code"], keep="first").reset_index(drop=True)
     dupes = before - len(df)
